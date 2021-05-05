@@ -11,6 +11,9 @@ public class Ball : MonoBehaviour
     public float velocityMax;
     public bool isGravityNormal = true;
 
+    private float prevXVelocity;
+    private float prevYVelocity;
+
     Rigidbody2D rb;
     Vector2 velocity = Vector2.zero;
 
@@ -22,6 +25,9 @@ public class Ball : MonoBehaviour
     void Update()
     {
         if (GameSession.Instance.State != GameSession.eState.Session) return;
+
+        prevXVelocity = rb.velocity.x;
+        prevYVelocity = rb.velocity.y;
 
         if (isGravityNormal) velocity.y += gravity;
         else velocity.x += gravity;
@@ -45,7 +51,23 @@ public class Ball : MonoBehaviour
 
             // Handle Bouncing
             rb.velocity = -rb.velocity * restitution;
+            //CheckBounce(collision.gameObject);
             velocity = Vector2.zero;
+        }
+    }
+
+    private void CheckBounce(GameObject paddle)
+    {
+        //if paddle is immediately right or left, flip Y
+        //else if paddle is immediately up or down, flip X
+
+        if (Mathf.Abs(rb.velocity.y) <= 0.1f && Mathf.Abs(prevYVelocity) > 0.0f)
+        {
+            rb.velocity = new Vector2(-rb.velocity.x, rb.velocity.y);
+        }
+        else if (Mathf.Abs(rb.velocity.x) <= 0.1f && Mathf.Abs(prevXVelocity) > 0.0f)
+        {
+            rb.velocity = new Vector2(rb.velocity.x, -rb.velocity.y);
         }
     }
 }
