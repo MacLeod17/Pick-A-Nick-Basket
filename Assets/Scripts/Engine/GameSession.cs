@@ -48,6 +48,7 @@ public class GameSession : MonoBehaviour
     private void Start()
     {
         HighScore = PlayerPrefs.GetInt("HighScore", 0);
+        if (highScoreUI != null) highScoreUI.text = $"Hi Score: {string.Format("{0:D5}", HighScore)}";
     }
 
     private void Update()
@@ -65,7 +66,7 @@ public class GameSession : MonoBehaviour
                 State = eState.Session;
                 break;
             case eState.Session:
-                //CheckLose();
+                CheckLose();
                 break;
             case eState.EndSession:
                 Cursor.lockState = CursorLockMode.None;
@@ -108,11 +109,13 @@ public class GameSession : MonoBehaviour
 
     public void OnRestart()
     {
+        PlayerPrefs.SetInt("HighScore", HighScore);
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     public void OnExit()
     {
+        PlayerPrefs.SetInt("HighScore", HighScore);
         Application.Quit();
     }
 
@@ -132,7 +135,7 @@ public class GameSession : MonoBehaviour
 
     private void CheckLose()
     {
-        if (true)
+        if (Mathf.Abs(ball.transform.position.x) > 9.5f || Mathf.Abs(ball.transform.position.y) > 5.5f)
         {
             State = eState.EndSession;
         }

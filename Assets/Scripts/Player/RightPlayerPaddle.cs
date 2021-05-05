@@ -27,5 +27,7 @@ public class RightPlayerPaddle : MonoBehaviour
                 transform.Translate(translate);
             }
         }
+
+        GetComponent<Rigidbody2D>().velocity = Vector2.zero;
     }
 }
