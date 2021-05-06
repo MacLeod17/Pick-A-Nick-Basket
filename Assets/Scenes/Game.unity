@@ -8466,7 +8466,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gravityMax: 0.2
   gravity: -0.1
-  restitution: 0.95
+  restitution: 0.85
   velocityMax: 8
   isGravityNormal: 1
 --- !u!58 &1917982717
