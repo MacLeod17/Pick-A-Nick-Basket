@@ -11,9 +11,6 @@ public class Ball : MonoBehaviour
     public float velocityMax;
     public bool isGravityNormal = true;
 
-    private float prevXVelocity;
-    private float prevYVelocity;
-
     Rigidbody2D rb;
     Vector2 velocity = Vector2.zero;
 
@@ -25,9 +22,6 @@ public class Ball : MonoBehaviour
     void Update()
     {
         if (GameSession.Instance.State != GameSession.eState.Session) return;
-
-        prevXVelocity = rb.velocity.x;
-        prevYVelocity = rb.velocity.y;
 
         if (isGravityNormal) velocity.y += gravity;
         else velocity.x += gravity;
@@ -41,7 +35,7 @@ public class Ball : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Player"))
+        if (collision.gameObject.tag.Contains("Player"))
         {
             AudioManager.Instance?.PlayAudio(0);
             GameSession.Instance.AddPoints(Mathf.RoundToInt(rb.velocity.magnitude));
@@ -50,24 +44,40 @@ public class Ball : MonoBehaviour
             gravity = Random.Range(-gravityMax, gravityMax);
 
             // Handle Bouncing
-            rb.velocity = -rb.velocity * restitution;
-            //CheckBounce(collision.gameObject);
+            //rb.velocity = -rb.velocity * restitution;
+            Debug.Log($"X: {transform.position.x}, Y: {transform.position.y}");
+            CheckBounce(collision.gameObject);
             velocity = Vector2.zero;
         }
     }
 
     private void CheckBounce(GameObject paddle)
     {
-        //if paddle is immediately right or left, flip Y
-        //else if paddle is immediately up or down, flip X
 
-        if (Mathf.Abs(rb.velocity.y) <= 0.1f && Mathf.Abs(prevYVelocity) > 0.0f)
+        /*
+        //if paddle is immediately up or down, flip Y
+        if (Mathf.Abs(transform.position.y) >= 3.7f && Mathf.Abs(transform.position.x) < 7.7f)
         {
-            rb.velocity = new Vector2(-rb.velocity.x, rb.velocity.y);
+            rb.velocity = new Vector2(rb.velocity.x, -rb.velocity.y) * restitution;
         }
-        else if (Mathf.Abs(rb.velocity.x) <= 0.1f && Mathf.Abs(prevXVelocity) > 0.0f)
+
+        //else if paddle is immediately left or right, flip X
+        else
         {
-            rb.velocity = new Vector2(rb.velocity.x, -rb.velocity.y);
+            rb.velocity = new Vector2(-rb.velocity.x, rb.velocity.y) * restitution;
+        }
+        */
+
+        //if paddle is immediately up or down, flip Y
+        if (paddle.tag.Contains("Horizontal"))
+        {
+            rb.velocity = new Vector2(rb.velocity.x, -rb.velocity.y) * restitution;
+        }
+
+        //else if paddle is immediately left or right, flip X
+        else
+        {
+            rb.velocity = new Vector2(-rb.velocity.x, rb.velocity.y) * restitution;
         }
     }
 }
