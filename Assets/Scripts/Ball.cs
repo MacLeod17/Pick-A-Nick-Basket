@@ -44,14 +44,14 @@ public class Ball : MonoBehaviour
             gravity = Random.Range(-gravityMax, gravityMax);
 
             // Handle Bouncing
-            //rb.velocity = -rb.velocity * restitution;
             Debug.Log($"X: {transform.position.x}, Y: {transform.position.y}");
-            CheckBounce(collision.gameObject);
+            CheckBounce(collision);
+            //collision.collider.bounds.max.x
             velocity = Vector2.zero;
         }
     }
 
-    private void CheckBounce(GameObject paddle)
+    private void CheckBounce(Collision2D collision)
     {
 
         /*
@@ -69,15 +69,29 @@ public class Ball : MonoBehaviour
         */
 
         //if paddle is immediately up or down, flip Y
-        if (paddle.tag.Contains("Horizontal"))
+        if (collision.gameObject.tag.Contains("Horizontal"))
         {
-            rb.velocity = new Vector2(rb.velocity.x, -rb.velocity.y) * restitution;
+            if (Mathf.Abs(collision.collider.bounds.max.y) < Mathf.Abs(transform.position.y))
+            {
+                rb.velocity = new Vector2(-rb.velocity.x, rb.velocity.y) * restitution;
+            }
+            else
+            {
+                rb.velocity = new Vector2(rb.velocity.x, -rb.velocity.y) * restitution;
+            }
         }
 
         //else if paddle is immediately left or right, flip X
         else
         {
-            rb.velocity = new Vector2(-rb.velocity.x, rb.velocity.y) * restitution;
+            if (Mathf.Abs(collision.collider.bounds.max.x) < Mathf.Abs(transform.position.x))
+            {
+                rb.velocity = new Vector2(rb.velocity.x, -rb.velocity.y) * restitution;
+            }
+            else
+            {
+                rb.velocity = new Vector2(-rb.velocity.x, rb.velocity.y) * restitution;
+            }
         }
     }
 }
