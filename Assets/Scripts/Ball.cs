@@ -29,8 +29,6 @@ public class Ball : MonoBehaviour
         if (velocity.magnitude > velocityMax) velocity = Vector3.ClampMagnitude(velocity, velocityMax);
 
         rb.velocity += velocity * Time.deltaTime;
-
-        if (rb.velocity.magnitude > velocityMax) rb.velocity = Vector3.ClampMagnitude(rb.velocity, velocityMax);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -44,31 +42,13 @@ public class Ball : MonoBehaviour
             gravity = Random.Range(-gravityMax, gravityMax);
 
             // Handle Bouncing
-            Debug.Log($"X: {transform.position.x}, Y: {transform.position.y}");
             CheckBounce(collision);
-            //collision.collider.bounds.max.x
             velocity = Vector2.zero;
         }
     }
 
     private void CheckBounce(Collision2D collision)
     {
-
-        /*
-        //if paddle is immediately up or down, flip Y
-        if (Mathf.Abs(transform.position.y) >= 3.7f && Mathf.Abs(transform.position.x) < 7.7f)
-        {
-            rb.velocity = new Vector2(rb.velocity.x, -rb.velocity.y) * restitution;
-        }
-
-        //else if paddle is immediately left or right, flip X
-        else
-        {
-            rb.velocity = new Vector2(-rb.velocity.x, rb.velocity.y) * restitution;
-        }
-        */
-
-        //if paddle is immediately up or down, flip Y
         if (collision.gameObject.tag.Contains("Horizontal"))
         {
             if (Mathf.Abs(collision.collider.bounds.max.y) < Mathf.Abs(transform.position.y))
@@ -80,8 +60,6 @@ public class Ball : MonoBehaviour
                 rb.velocity = new Vector2(rb.velocity.x, -rb.velocity.y) * restitution;
             }
         }
-
-        //else if paddle is immediately left or right, flip X
         else
         {
             if (Mathf.Abs(collision.collider.bounds.max.x) < Mathf.Abs(transform.position.x))
